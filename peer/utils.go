@@ -1,18 +1,15 @@
 package main
 
 import (
-	"encoding/json"
+	"math/rand"
 	"net"
 	"strings"
 )
 
-func newMsgBytes(msgtype string, msgcontent string) []byte {
-	var msg Msg
-	msg.Type = msgtype
-	msg.Content = msgcontent
-	msgS, err := json.Marshal(msg)
-	check(err)
-	return msgS
+func getIPPortFromConn(conn net.Conn) string {
+	ip := getIPFromConn(conn)
+	port := getPortFromConn(conn)
+	return ip + ":" + port
 }
 func getIPFromConn(conn net.Conn) string {
 	s := conn.RemoteAddr().String()
@@ -25,4 +22,8 @@ func getPortFromConn(conn net.Conn) string {
 	s = strings.Split(s, ":")[1]
 	s = strings.Trim(s, ":")
 	return s
+}
+func randInt(min int, max int) int {
+	r := rand.Intn(max-min) + min
+	return r
 }

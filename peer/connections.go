@@ -1,12 +1,10 @@
 package main
 
 import (
-	"encoding/json"
+	"bufio"
 	"fmt"
 	"log"
 	"net"
-
-	"github.com/fatih/color"
 )
 
 func acceptPeers(peer Peer) {
@@ -26,7 +24,7 @@ func acceptPeers(peer Peer) {
 		newPeer.IP = getIPFromConn(conn)
 		newPeer.Port = getPortFromConn(conn)
 		newPeer.Conn = conn
-		listPeers = append(listPeers, newPeer)
+		peersList.Peers = append(peersList.Peers, newPeer)
 		go handleConn(conn)
 	}
 }
@@ -37,32 +35,38 @@ func connectToPeer(peer Peer) {
 		return
 	}
 	peer.Conn = conn
-	listPeers = append(listPeers, peer)
+	peersList.Peers = append(peersList.Peers, peer)
 	go handleConn(conn)
 }
 func handleConn(conn net.Conn) {
 	connRunning := true
 	log.Println("handling conn: " + conn.RemoteAddr().String())
-	//reply to the conn
-	msgB := newMsgBytes("Hi", "New Peer connected")
+	//reply to the conn, send the peerList
+	var msg Msg
+	msg = msg.construct("PeersList", "here my peersList", peersList)
+	msgB := msg.toBytes()
 	_, err := conn.Write(msgB)
-	if err != nil {
-		check(err)
-	}
+	check(err)
 
-	buffer := make([]byte, 1024)
 	for connRunning {
-		bytesRead, err := conn.Read(buffer)
+		/*
+			buffer := make([]byte, 1024)
+			bytesRead, err := conn.Read(buffer)
+		*/
+		newmsg, err := bufio.NewReader(conn).ReadString('\n')
 		if err != nil {
 			log.Println(err)
 			connRunning = false
 		} else {
-			s := string(buffer[0:bytesRead])
+			/*
+				fmt.Println(buffer)
+				fmt.Println(bytesRead)
+			*/
 			var msg Msg
-			err := json.Unmarshal([]byte(s), &msg)
-			check(err)
-			log.Println("[New msg] [Title]: " + msg.Type + " [Content]: " + msg.Content)
-			color.Green(msg.Content)
+			//color.Blue(string(buffer[0:bytesRead]))
+			//msg = msg.createFromBytes([]byte(string(buffer[0:bytesRead])))
+			msg = msg.createFromBytes([]byte(newmsg))
+			messageHandler(conn, msg)
 		}
 	}
 	//TODO add that if the peer closed is the p2p server, show a warning message at the peer

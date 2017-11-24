@@ -2,35 +2,36 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"net"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/fatih/color"
 )
 
 type Peer struct {
-	IP   string
-	Port string
-	Role string //client or server
-	Conn net.Conn
-}
-type Msg struct {
-	Type    string `json:"type"`
-	Content string `json:"content"`
+	ID   string   `json:"id"`
+	IP   string   `json:"ip"`
+	Port string   `json:"port"`
+	Role string   `json:"role"` //client or server
+	Conn net.Conn `json:"conn"`
 }
 
-var listPeers []Peer
 var running bool
+var thisPeerID string
 
 func main() {
 	//initialize some vars
+	rand.Seed(time.Now().Unix())
 	running = true
 	var peer Peer
 
 	color.Blue("Starting Peer")
 	readConfig("config.json")
 
+	peer.ID = strconv.Itoa(randInt(1, 1000)) //0 is reserved for server
 	peer.IP = config.IP
 	peer.Port = config.Port
 	peer.Role = "client"
@@ -41,10 +42,17 @@ func main() {
 			color.Yellow("Running as p2p server")
 			peer.Role = "server"
 			peer.Port = config.ServerPort
-			go acceptPeers(peer)
+			peer.ID = "0"
 		}
 	}
+	thisPeerID = peer.ID
+	peersList.PeerID = peer.ID
 	fmt.Println(peer)
+	peersList.Peers = append(peersList.Peers, peer)
+	fmt.Println(peersList)
+	if peer.Role == "server" {
+		go acceptPeers(peer)
+	}
 	if peer.Role == "client" {
 		var newPeer Peer
 		newPeer.IP = config.ServerIP
