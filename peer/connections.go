@@ -24,8 +24,16 @@ func acceptPeers(peer Peer) {
 		newPeer.IP = getIPFromConn(conn)
 		newPeer.Port = getPortFromConn(conn)
 		newPeer.Conn = conn
+		/*
+			//ask to the peer, for the peer ID
+			resp, err := http.Get("http://" + newPeer.IP + ":" + newPeer.Port)
+			check(err)
+			color.Red("-----")
+			fmt.Println(resp)
+			//newPeer.ID = resp
+		*/
 		peersList.Peers = append(peersList.Peers, newPeer)
-		go handleConn(conn)
+		go handleConn(conn, newPeer)
 	}
 }
 func connectToPeer(peer Peer) {
@@ -36,9 +44,9 @@ func connectToPeer(peer Peer) {
 	}
 	peer.Conn = conn
 	peersList.Peers = append(peersList.Peers, peer)
-	go handleConn(conn)
+	go handleConn(conn, peer)
 }
-func handleConn(conn net.Conn) {
+func handleConn(conn net.Conn, connPeer Peer) {
 	connRunning := true
 	log.Println("handling conn: " + conn.RemoteAddr().String())
 	//reply to the conn, send the peerList
@@ -66,10 +74,11 @@ func handleConn(conn net.Conn) {
 			//color.Blue(string(buffer[0:bytesRead]))
 			//msg = msg.createFromBytes([]byte(string(buffer[0:bytesRead])))
 			msg = msg.createFromBytes([]byte(newmsg))
-			messageHandler(conn, msg)
+			messageHandler(connPeer, msg)
 		}
 	}
 	//TODO add that if the peer closed is the p2p server, show a warning message at the peer
 	log.Println("Peer: " + conn.RemoteAddr().String() + " connection closed")
 	conn.Close()
+	//TODO delete the peer from the peersList
 }

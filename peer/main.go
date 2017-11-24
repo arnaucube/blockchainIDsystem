@@ -12,7 +12,7 @@ import (
 )
 
 type Peer struct {
-	ID   string   `json:"id"`
+	ID   string   `json:"id"` //in the future, this will be the peer hash
 	IP   string   `json:"ip"`
 	Port string   `json:"port"`
 	Role string   `json:"role"` //client or server
@@ -21,39 +21,42 @@ type Peer struct {
 
 var running bool
 var thisPeerID string
+var runningPeer Peer
 
 func main() {
 	//initialize some vars
 	rand.Seed(time.Now().Unix())
 	running = true
-	var peer Peer
 
 	color.Blue("Starting Peer")
+	//read configuration file
 	readConfig("config.json")
 
-	peer.ID = strconv.Itoa(randInt(1, 1000)) //0 is reserved for server
-	peer.IP = config.IP
-	peer.Port = config.Port
-	peer.Role = "client"
+	runningPeer.ID = strconv.Itoa(randInt(1, 1000)) //0 is reserved for server
+	runningPeer.IP = config.IP
+	runningPeer.Port = config.Port
+	runningPeer.Role = "client"
+
+	go runRestServer()
 
 	//read flags, to know if is runned as p2p server
 	if len(os.Args) > 1 {
 		if os.Args[1] == "server" {
 			color.Yellow("Running as p2p server")
-			peer.Role = "server"
-			peer.Port = config.ServerPort
-			peer.ID = "0"
+			runningPeer.Role = "server"
+			runningPeer.Port = config.ServerPort
+			runningPeer.ID = "0"
 		}
 	}
-	thisPeerID = peer.ID
-	peersList.PeerID = peer.ID
-	fmt.Println(peer)
-	peersList.Peers = append(peersList.Peers, peer)
+	thisPeerID = runningPeer.ID
+	peersList.PeerID = runningPeer.ID
+	fmt.Println(runningPeer)
+	peersList.Peers = append(peersList.Peers, runningPeer)
 	fmt.Println(peersList)
-	if peer.Role == "server" {
-		go acceptPeers(peer)
+	if runningPeer.Role == "server" {
+		go acceptPeers(runningPeer)
 	}
-	if peer.Role == "client" {
+	if runningPeer.Role == "client" {
 		var newPeer Peer
 		newPeer.IP = config.ServerIP
 		newPeer.Port = config.ServerPort

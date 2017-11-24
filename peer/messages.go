@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net"
 	"time"
 
 	"github.com/fatih/color"
@@ -17,7 +16,7 @@ type Msg struct {
 	PeersList PeersList `json:"peerslist"`
 }
 
-func messageHandler(conn net.Conn, msg Msg) {
+func messageHandler(peer Peer, msg Msg) {
 
 	log.Println("[New msg]")
 	log.Println(msg)
@@ -31,10 +30,33 @@ func messageHandler(conn net.Conn, msg Msg) {
 		color.Blue("newPeerslist")
 		fmt.Println(msg.PeersList)
 
-		time.Sleep(1000 * time.Millisecond)
-		updatePeersList(conn, msg.PeersList)
-		propagatePeersList()
+		//time.Sleep(1000 * time.Millisecond)
+		updatePeersList(peer.Conn, msg.PeersList)
+		propagatePeersList(peer)
 		printPeersList()
+		break
+	case "PeersList_Response":
+		color.Blue("newPeerslist")
+		fmt.Println(msg.PeersList)
+
+		//time.Sleep(1000 * time.Millisecond)
+		updatePeersList(peer.Conn, msg.PeersList)
+		printPeersList()
+		break
+	case "MyID":
+		color.Blue("MyID")
+		fmt.Println(msg.Content)
+		color.Green(peer.Conn.RemoteAddr().String())
+		peer.ID = msg.Content
+		searchPeerAndUpdate(peer)
+
+		//time.Sleep(1000 * time.Millisecond)
+		/*
+			updatePeersList(peer.Conn, msg.PeersList)
+			propagatePeersList(peer)
+		*/
+		printPeersList()
+		break
 	default:
 		log.Println("Msg.Type not supported")
 		break
