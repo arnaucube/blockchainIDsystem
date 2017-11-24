@@ -49,19 +49,22 @@ func main() {
 		}
 	}
 	thisPeerID = runningPeer.ID
-	peersList.PeerID = runningPeer.ID
+	outcomingPeersList.PeerID = runningPeer.ID
 	fmt.Println(runningPeer)
-	peersList.Peers = append(peersList.Peers, runningPeer)
-	fmt.Println(peersList)
+	//outcomingPeersList.Peers = append(outcomingPeersList.Peers, runningPeer)
+	outcomingPeersList = appendPeerIfNoExist(outcomingPeersList, runningPeer)
+	fmt.Println(outcomingPeersList)
 	if runningPeer.Role == "server" {
 		go acceptPeers(runningPeer)
 	}
 	if runningPeer.Role == "client" {
 		var newPeer Peer
+		newPeer.ID = "0"
 		newPeer.IP = config.ServerIP
 		newPeer.Port = config.ServerPort
 		newPeer.Role = "server"
 		connectToPeer(newPeer)
+		go acceptPeers(runningPeer)
 	}
 
 	for running {

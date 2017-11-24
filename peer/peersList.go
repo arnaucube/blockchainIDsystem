@@ -14,8 +14,17 @@ type PeersList struct {
 	Date   time.Time `json:"date"`
 }
 
-//var peersList []Peer
-var peersList PeersList
+var outcomingPeersList PeersList
+var incomingPeersList PeersList
+var networkPeersList PeersList //the peers that have been received in the lists from other peers
+
+/*
+a future option is to put:
+	type PeersList struct {
+		Incoming	PeersList
+		Outcoming	PeersList
+	}
+*/
 
 func peerIsInPeersList(p Peer, pl []Peer) int {
 	r := -1
@@ -26,23 +35,30 @@ func peerIsInPeersList(p Peer, pl []Peer) int {
 	}
 	return r
 }
-func updatePeersList(conn net.Conn, newPeersList PeersList) {
+func appendPeerIfNoExist(pl PeersList, p Peer) PeersList {
+	i := peerIsInPeersList(p, pl.Peers)
+	if i == -1 {
+		pl.Peers = append(pl.Peers, p)
+	}
+	return pl
+}
+func updateNetworkPeersList(conn net.Conn, newPeersList PeersList) {
 	for _, peer := range newPeersList.Peers {
 		if getIPPortFromConn(conn) == peer.IP+":"+peer.Port {
 			peer.ID = newPeersList.PeerID
 			color.Yellow(peer.ID)
 		}
-		i := peerIsInPeersList(peer, peersList.Peers)
+		i := peerIsInPeersList(peer, networkPeersList.Peers)
 		if i == -1 {
-			peersList.Peers = append(peersList.Peers, peer)
+			networkPeersList.Peers = append(networkPeersList.Peers, peer)
 		} else {
-			fmt.Println(peersList.Peers[i])
-			peersList.Peers[i].ID = peer.ID
+			fmt.Println(networkPeersList.Peers[i])
+			networkPeersList.Peers[i].ID = peer.ID
 		}
 	}
 }
 func searchPeerAndUpdate(p Peer) {
-	for _, peer := range peersList.Peers {
+	for _, peer := range outcomingPeersList.Peers {
 		color.Red(p.IP + ":" + p.Port)
 		color.Yellow(peer.IP + ":" + peer.Port)
 		if p.IP+":"+p.Port == peer.IP+":"+peer.Port {
@@ -51,14 +67,14 @@ func searchPeerAndUpdate(p Peer) {
 	}
 }
 
-//send the peersList to all the peers except the peer that has send the peersList
+//send the outcomingPeersList to all the peers except the peer that has send the outcomingPeersList
 func propagatePeersList(p Peer) {
-	for _, peer := range peersList.Peers {
+	for _, peer := range networkPeersList.Peers {
 		if peer.Conn != nil {
 			if peer.ID != p.ID && p.ID != "" {
 				color.Yellow(peer.ID + " - " + p.ID)
 				var msg Msg
-				msg = msg.construct("PeersList", "here my peersList", peersList)
+				msg = msg.construct("PeersList", "here my outcomingPeersList", outcomingPeersList)
 				msgB := msg.toBytes()
 				_, err := peer.Conn.Write(msgB)
 				check(err)
@@ -73,19 +89,36 @@ func propagatePeersList(p Peer) {
 					check(err)
 				*/
 				var msg Msg
-				msg = msg.construct("PeersList_Response", "here my peersList", peersList)
+				msg = msg.construct("PeersList_Response", "here my outcomingPeersList", outcomingPeersList)
 				msgB := msg.toBytes()
 				_, err := peer.Conn.Write(msgB)
 				check(err)
 			}
+		} else {
+			//connect to peer
+			if peer.ID != p.ID && peer.ID != runningPeer.ID {
+				if peerIsInPeersList(peer, outcomingPeersList.Peers) == -1 {
+					connectToPeer(peer)
+				}
+			}
+
 		}
 	}
 }
 func printPeersList() {
 	fmt.Println("")
-	color.Green("PEERSLIST:")
-	color.Green("runningPeer.ID: " + runningPeer.ID)
-	for _, peer := range peersList.Peers {
+	color.Blue("runningPeer.ID: " + runningPeer.ID)
+	color.Green("OUTCOMING PEERSLIST:")
+	for _, peer := range outcomingPeersList.Peers {
+		fmt.Println(peer)
+	}
+	color.Green("INCOMING PEERSLIST:")
+	for _, peer := range incomingPeersList.Peers {
+		fmt.Println(peer)
+	}
+
+	color.Green("NETWORK PEERSLIST:")
+	for _, peer := range networkPeersList.Peers {
 		fmt.Println(peer)
 	}
 	fmt.Println("")

@@ -31,7 +31,7 @@ func messageHandler(peer Peer, msg Msg) {
 		fmt.Println(msg.PeersList)
 
 		//time.Sleep(1000 * time.Millisecond)
-		updatePeersList(peer.Conn, msg.PeersList)
+		updateNetworkPeersList(peer.Conn, msg.PeersList)
 		propagatePeersList(peer)
 		printPeersList()
 		break
@@ -40,7 +40,7 @@ func messageHandler(peer Peer, msg Msg) {
 		fmt.Println(msg.PeersList)
 
 		//time.Sleep(1000 * time.Millisecond)
-		updatePeersList(peer.Conn, msg.PeersList)
+		updateNetworkPeersList(peer.Conn, msg.PeersList)
 		printPeersList()
 		break
 	case "MyID":

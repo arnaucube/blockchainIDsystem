@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net"
+
+	"github.com/fatih/color"
 )
 
 func acceptPeers(peer Peer) {
@@ -32,18 +34,22 @@ func acceptPeers(peer Peer) {
 			fmt.Println(resp)
 			//newPeer.ID = resp
 		*/
-		peersList.Peers = append(peersList.Peers, newPeer)
+		//incomingPeersList.Peers = append(incomingPeersList.Peers, newPeer)
+		incomingPeersList = appendPeerIfNoExist(incomingPeersList, newPeer)
 		go handleConn(conn, newPeer)
 	}
 }
 func connectToPeer(peer Peer) {
+	color.Green("connecting to new peer")
+	log.Println("Connecting to new peer: " + peer.IP + ":" + peer.Port)
 	conn, err := net.Dial("tcp", peer.IP+":"+peer.Port)
 	if err != nil {
 		log.Println("Error connecting to: " + peer.IP + ":" + peer.Port)
 		return
 	}
 	peer.Conn = conn
-	peersList.Peers = append(peersList.Peers, peer)
+	//outcomingPeersList.Peers = append(outcomingPeersList.Peers, peer)
+	outcomingPeersList = appendPeerIfNoExist(outcomingPeersList, peer)
 	go handleConn(conn, peer)
 }
 func handleConn(conn net.Conn, connPeer Peer) {
@@ -51,7 +57,7 @@ func handleConn(conn net.Conn, connPeer Peer) {
 	log.Println("handling conn: " + conn.RemoteAddr().String())
 	//reply to the conn, send the peerList
 	var msg Msg
-	msg = msg.construct("PeersList", "here my peersList", peersList)
+	msg = msg.construct("PeersList", "here my outcomingPeersList", outcomingPeersList)
 	msgB := msg.toBytes()
 	_, err := conn.Write(msgB)
 	check(err)
@@ -80,5 +86,5 @@ func handleConn(conn net.Conn, connPeer Peer) {
 	//TODO add that if the peer closed is the p2p server, show a warning message at the peer
 	log.Println("Peer: " + conn.RemoteAddr().String() + " connection closed")
 	conn.Close()
-	//TODO delete the peer from the peersList
+	//TODO delete the peer from the outcomingPeersList
 }
