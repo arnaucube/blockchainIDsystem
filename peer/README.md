@@ -64,8 +64,9 @@ Needs the config.json file:
 
 
 ## TODO
-- When a peer connects to the network, sends his last Block, and receives the new Blocks from this last Block
-- Delete the peer from the peers list when the connection is closed
+- When a peer connects to the network, sends his last Block, and receives the new Blocks from this last Block --> DONE with REST petitions, maybe is better with tcp conn
+- Delete the peer from the peers list when the connection is closed --> DONE
 - REST:
     - endpoint to get if the address is in the blockchain (to verify users)
 - parameters Date or LastUpdate on the structs needs to be updated values
+- implement rsa encryption between peers

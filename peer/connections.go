@@ -88,4 +88,7 @@ func handleConn(conn net.Conn, connPeer Peer) {
 	log.Println("Peer: " + conn.RemoteAddr().String() + " connection closed")
 	conn.Close()
 	//TODO delete the peer from the outcomingPeersList
+	deletePeerFromPeersList(connPeer, &outcomingPeersList)
+	color.Yellow("peer deleted, current peerList:")
+	printPeersList()
 }

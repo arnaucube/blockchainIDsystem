@@ -1,8 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
+	"io/ioutil"
+	"net/http"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 type Block struct {
@@ -57,7 +63,11 @@ func (bc *Blockchain) blockExists(block Block) bool {
 	}
 	return false
 }
+
 func (bc *Blockchain) addBlock(block Block) error {
+	if blockchain.blockExists(block) {
+		return errors.New("[Error adding Block]: Block already exists in the Blockchain")
+	}
 	if len(bc.Blocks) > 0 {
 		bc.Blocks[len(bc.Blocks)-1].NextHash = block.Hash
 	} else {
@@ -66,4 +76,49 @@ func (bc *Blockchain) addBlock(block Block) error {
 	bc.Blocks = append(bc.Blocks, block)
 
 	return nil
+}
+
+func reconstructBlockchainFromBlock(urlAPI string, h string) {
+	color.Yellow("reconstructing the blockchain from last block in memory")
+	var block Block
+	if h == "" {
+		//no genesis block yet
+		color.Green(urlAPI + "/blocks/genesis")
+		res, err := http.Get(urlAPI + "/blocks/genesis")
+		check(err)
+		body, err := ioutil.ReadAll(res.Body)
+		check(err)
+		err = json.Unmarshal(body, &block)
+		check(err)
+		color.Yellow("[New Block]: " + block.Hash)
+		err = blockchain.addBlock(block)
+		check(err)
+	} else {
+		block.NextHash = h
+	}
+
+	for block.NextHash != "" {
+		res, err := http.Get(urlAPI + "/blocks/next/" + block.Hash)
+		check(err)
+		body, err := ioutil.ReadAll(res.Body)
+		check(err)
+		err = json.Unmarshal(body, &block)
+		check(err)
+		color.Yellow("[New Block]: " + block.Hash)
+		err = blockchain.addBlock(block)
+		check(err)
+	}
+	blockchain.print()
+}
+
+func (bc *Blockchain) print() {
+	color.Green("Printing Blockchain stored in memory")
+	color.Green("Genesis Block: " + bc.GenesisBlock)
+	for _, b := range bc.Blocks {
+		color.Green("Block height:")
+		fmt.Println(b.Height)
+		color.Green("Hash: " + b.Hash)
+		color.Green("Date: " + b.Date.String())
+		color.Green("---")
+	}
 }

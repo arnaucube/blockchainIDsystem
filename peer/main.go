@@ -11,11 +11,12 @@ import (
 )
 
 type Peer struct {
-	ID   string   `json:"id"` //in the future, this will be the peer hash
-	IP   string   `json:"ip"`
-	Port string   `json:"port"`
-	Role string   `json:"role"` //client or server
-	Conn net.Conn `json:"conn"`
+	ID       string   `json:"id"` //in the future, this will be the peer hash
+	IP       string   `json:"ip"`
+	Port     string   `json:"port"`
+	RESTPort string   `json:"restport"`
+	Role     string   `json:"role"` //client or server
+	Conn     net.Conn `json:"conn"`
 }
 
 var running bool
@@ -34,6 +35,7 @@ func main() {
 	//runningPeer.ID = strconv.Itoa(randInt(1, 1000)) //0 is reserved for server
 	runningPeer.IP = config.IP
 	runningPeer.Port = config.Port
+	runningPeer.RESTPort = config.RESTPort
 	runningPeer.ID = hashPeer(runningPeer)
 	runningPeer.Role = "client"
 
@@ -66,6 +68,7 @@ func main() {
 		serverPeer.ID = hashPeer(serverPeer)
 		serverPeer.Role = "server"
 		connectToPeer(serverPeer)
+		reconstructBlockchainFromBlock("http://"+config.IP+":"+config.ServerRESTPort, blockchain.GenesisBlock)
 		go acceptPeers(runningPeer)
 	}
 

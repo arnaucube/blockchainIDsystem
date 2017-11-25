@@ -35,6 +35,14 @@ func peerIsInPeersList(p Peer, pl []Peer) int {
 	}
 	return r
 }
+
+func deletePeerFromPeersList(p Peer, pl *PeersList) {
+	i := peerIsInPeersList(p, pl.Peers)
+	if i != -1 {
+		//delete peer from pl.Peers
+		pl.Peers = append(pl.Peers[:i], pl.Peers[i+1:]...)
+	}
+}
 func appendPeerIfNoExist(pl PeersList, p Peer) PeersList {
 	i := peerIsInPeersList(p, pl.Peers)
 	if i == -1 {

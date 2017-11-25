@@ -4,5 +4,6 @@
     "restip": "127.0.0.1",
     "restport": "3002",
     "serverip": "127.0.0.1",
-    "serverport": "3000"
+    "serverport": "3000",
+    "serverrestport": "3002"
 }

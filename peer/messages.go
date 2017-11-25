@@ -44,20 +44,6 @@ func messageHandler(peer Peer, msg Msg) {
 		updateNetworkPeersList(peer.Conn, msg.PeersList)
 		printPeersList()
 		break
-	case "MyID":
-		color.Blue("MyID")
-		fmt.Println(msg.Content)
-		color.Green(peer.Conn.RemoteAddr().String())
-		peer.ID = msg.Content
-		searchPeerAndUpdate(peer)
-
-		//time.Sleep(1000 * time.Millisecond)
-		/*
-			updatePeersList(peer.Conn, msg.PeersList)
-			propagatePeersList(peer)
-		*/
-		printPeersList()
-		break
 	case "Block":
 		if !blockchain.blockExists(msg.Block) {
 			blockchain.addBlock(msg.Block)

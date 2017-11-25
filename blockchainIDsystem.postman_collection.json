@@ -1,0 +1,64 @@
+{
+	"variables": [],
+	"info": {
+		"name": "blockchainIDsystem",
+		"_postman_id": "4f8e319b-3c66-8ce8-ae09-091c53a281f1",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://127.0.0.1:3002/register",
+			"request": {
+				"url": "http://127.0.0.1:3002/register",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"address\": \"asdf1\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:3002/peers",
+			"request": {
+				"url": "http://127.0.0.1:3002/peers",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:3002/blocks/genesis",
+			"request": {
+				"url": "http://127.0.0.1:3002/blocks/genesis",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:3004/blocks/next/a5B-sv24LTvo80ZvQg1uf3bmDwqyjU9LxVEtIrmkkn0=",
+			"request": {
+				"url": "http://127.0.0.1:3004/blocks/next/a5B-sv24LTvo80ZvQg1uf3bmDwqyjU9LxVEtIrmkkn0=",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
