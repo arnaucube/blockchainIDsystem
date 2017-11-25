@@ -14,6 +14,7 @@ type Msg struct {
 	Date      time.Time `json:"date"`
 	Content   string    `json:"content"`
 	PeersList PeersList `json:"peerslist"`
+	Block     Block     `json:"block"`
 }
 
 func messageHandler(peer Peer, msg Msg) {
@@ -57,18 +58,22 @@ func messageHandler(peer Peer, msg Msg) {
 		*/
 		printPeersList()
 		break
+	case "Block":
+		if !blockchain.blockExists(msg.Block) {
+			blockchain.addBlock(msg.Block)
+			propagateBlock(msg.Block)
+		}
+		break
 	default:
 		log.Println("Msg.Type not supported")
 		break
 	}
 
 }
-func (msg Msg) construct(msgtype string, msgcontent string, peersList PeersList) Msg {
+func (msg *Msg) construct(msgtype string, msgcontent string) {
 	msg.Type = msgtype
 	msg.Content = msgcontent
-	msg.PeersList = peersList
 	msg.Date = time.Now()
-	return msg
 }
 func (msg Msg) toBytes() []byte {
 	msgS, err := json.Marshal(msg)

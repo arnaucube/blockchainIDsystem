@@ -5,7 +5,6 @@ import (
 	"math/rand"
 	"net"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/fatih/color"
@@ -32,9 +31,10 @@ func main() {
 	//read configuration file
 	readConfig("config.json")
 
-	runningPeer.ID = strconv.Itoa(randInt(1, 1000)) //0 is reserved for server
+	//runningPeer.ID = strconv.Itoa(randInt(1, 1000)) //0 is reserved for server
 	runningPeer.IP = config.IP
 	runningPeer.Port = config.Port
+	runningPeer.ID = hashPeer(runningPeer)
 	runningPeer.Role = "client"
 
 	go runRestServer()
@@ -45,7 +45,8 @@ func main() {
 			color.Yellow("Running as p2p server")
 			runningPeer.Role = "server"
 			runningPeer.Port = config.ServerPort
-			runningPeer.ID = "0"
+			runningPeer.ID = hashPeer(runningPeer)
+			//runningPeer.ID = "0"
 		}
 	}
 	thisPeerID = runningPeer.ID
@@ -58,12 +59,13 @@ func main() {
 		go acceptPeers(runningPeer)
 	}
 	if runningPeer.Role == "client" {
-		var newPeer Peer
-		newPeer.ID = "0"
-		newPeer.IP = config.ServerIP
-		newPeer.Port = config.ServerPort
-		newPeer.Role = "server"
-		connectToPeer(newPeer)
+		var serverPeer Peer
+		//serverPeer.ID = "0"
+		serverPeer.IP = config.ServerIP
+		serverPeer.Port = config.ServerPort
+		serverPeer.ID = hashPeer(serverPeer)
+		serverPeer.Role = "server"
+		connectToPeer(serverPeer)
 		go acceptPeers(runningPeer)
 	}
 

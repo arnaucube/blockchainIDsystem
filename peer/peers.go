@@ -74,22 +74,16 @@ func propagatePeersList(p Peer) {
 			if peer.ID != p.ID && p.ID != "" {
 				color.Yellow(peer.ID + " - " + p.ID)
 				var msg Msg
-				msg = msg.construct("PeersList", "here my outcomingPeersList", outcomingPeersList)
+				msg.construct("PeersList", "here my outcomingPeersList")
+				msg.PeersList = outcomingPeersList
 				msgB := msg.toBytes()
 				_, err := peer.Conn.Write(msgB)
 				check(err)
 			} else {
-				//to the peer that has sent the peerList, we send our ID
-				/*
-					var msg Msg
-					var pl PeersList
-					msg = msg.construct("MyID", runningPeer.ID, pl)
-					msgB := msg.toBytes()
-					_, err := p.Conn.Write(msgB)
-					check(err)
-				*/
+				//to the peer that has sent the peerList, we send our PeersList
 				var msg Msg
-				msg = msg.construct("PeersList_Response", "here my outcomingPeersList", outcomingPeersList)
+				msg.construct("PeersList_Response", "here my outcomingPeersList")
+				msg.PeersList = outcomingPeersList
 				msgB := msg.toBytes()
 				_, err := peer.Conn.Write(msgB)
 				check(err)
@@ -122,4 +116,19 @@ func printPeersList() {
 		fmt.Println(peer)
 	}
 	fmt.Println("")
+}
+
+//send the block to all the peers of the outcomingPeersList
+func propagateBlock(b Block) {
+	//prepare the msg to send to all connected peers
+	var msg Msg
+	msg.construct("Block", "new block")
+	msg.Block = b
+	msgB := msg.toBytes()
+	for _, peer := range outcomingPeersList.Peers {
+		if peer.Conn != nil {
+			_, err := peer.Conn.Write(msgB)
+			check(err)
+		}
+	}
 }

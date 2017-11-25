@@ -57,7 +57,8 @@ func handleConn(conn net.Conn, connPeer Peer) {
 	log.Println("handling conn: " + conn.RemoteAddr().String())
 	//reply to the conn, send the peerList
 	var msg Msg
-	msg = msg.construct("PeersList", "here my outcomingPeersList", outcomingPeersList)
+	msg.construct("PeersList", "here my outcomingPeersList")
+	msg.PeersList = outcomingPeersList
 	msgB := msg.toBytes()
 	_, err := conn.Write(msgB)
 	check(err)
