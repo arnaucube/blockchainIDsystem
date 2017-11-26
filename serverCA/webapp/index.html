@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>serverCA</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
+
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans:400,700'>
+    <!-- Material Design fonts -->
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700">
+    <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+
+    <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.min.css">
+
+
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/colors.css" rel="stylesheet">
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+</head>
+
+<body ng-app="webapp">
+    <div ng-include="'views/navbar.html'"></div>
+    <br><br><br><br><br>
+    <div ng-view></div>
+
+
+
+    <!-- Angular js -->
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-messages/angular-messages.js"></script>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+    <!-- Bootstrap Material Design -->
+    <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/bootstrap-material-design.css">
+    <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/ripples.css">
+
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/angular-bootstrap-material/dist/angular-bootstrap-material.js"></script>
+    <!--<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/css/bootstrap-material-design.min.css" integrity="sha384-R80DC0KVBO4GSTw+wZ5x2zn2pu4POSErBkf8/fSFhPXHxvHJydT0CSgAP2Yo2r4I" crossorigin="anonymous">
+-->
+    <!-- jQuery for Bootstrap -->
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+
+    <!-- toastr -->
+    <link rel="stylesheet" type="text/css" href="bower_components/angular-toastr/dist/angular-toastr.css" />
+    <script type="text/javascript" src="bower_components/angular-toastr/dist/angular-toastr.tpls.js"></script>
+
+
+
+    <!-- app's js -->
+    <script src="app.js"></script>
+    <script src="views/navbar.js"></script>
+    <script src="views/main/main.js"></script>
+</body>
+
+</html>

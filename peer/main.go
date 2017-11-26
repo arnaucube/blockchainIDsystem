@@ -39,8 +39,7 @@ func main() {
 	runningPeer.ID = hashPeer(runningPeer)
 	runningPeer.Role = "client"
 
-	go runRestServer()
-
+	//TODO clean and reorder the following lines (43 to 62)
 	//read flags, to know if is runned as p2p server
 	if len(os.Args) > 1 {
 		if os.Args[1] == "server" {
@@ -50,7 +49,19 @@ func main() {
 			runningPeer.ID = hashPeer(runningPeer)
 			//runningPeer.ID = "0"
 		}
+		if len(os.Args) > 3 {
+			config.Port = os.Args[2]
+			config.RESTPort = os.Args[3]
+			runningPeer.Port = os.Args[2]
+			runningPeer.RESTPort = os.Args[3]
+			if os.Args[1] == "server" {
+				runningPeer.Port = config.ServerPort
+			}
+			runningPeer.ID = hashPeer(runningPeer)
+		}
 	}
+
+	go runRestServer()
 	thisPeerID = runningPeer.ID
 	outcomingPeersList.PeerID = runningPeer.ID
 	fmt.Println(runningPeer)
@@ -67,9 +78,9 @@ func main() {
 		serverPeer.Port = config.ServerPort
 		serverPeer.ID = hashPeer(serverPeer)
 		serverPeer.Role = "server"
+		go acceptPeers(runningPeer)
 		connectToPeer(serverPeer)
 		reconstructBlockchainFromBlock("http://"+config.IP+":"+config.ServerRESTPort, blockchain.GenesisBlock)
-		go acceptPeers(runningPeer)
 	}
 
 	for running {

@@ -23,6 +23,7 @@ a future option is to put:
 	type PeersList struct {
 		Incoming	PeersList
 		Outcoming	PeersList
+		Network	PeersList
 	}
 */
 
@@ -75,7 +76,7 @@ func searchPeerAndUpdate(p Peer) {
 	}
 }
 
-//send the outcomingPeersList to all the peers except the peer that has send the outcomingPeersList
+//send the outcomingPeersList to all the peers except the peer p that has send the outcomingPeersList
 func propagatePeersList(p Peer) {
 	for _, peer := range networkPeersList.Peers {
 		if peer.Conn != nil {
@@ -88,7 +89,16 @@ func propagatePeersList(p Peer) {
 				_, err := peer.Conn.Write(msgB)
 				check(err)
 			} else {
+				/*
+					for the moment, this is not being called, due that in the IncomingPeersList,
+					there is no peer.ID, so in the comparation wih the peer that has send the
+					peersList, is comparing ID with "", so nevere enters this 'else' section
+
+					maybe it's not needed. TODO check if it's needed the PeerList_Response
+					For the moment is working without it
+				*/
 				//to the peer that has sent the peerList, we send our PeersList
+
 				var msg Msg
 				msg.construct("PeersList_Response", "here my outcomingPeersList")
 				msg.PeersList = outcomingPeersList
@@ -100,6 +110,7 @@ func propagatePeersList(p Peer) {
 			//connect to peer
 			if peer.ID != p.ID && peer.ID != runningPeer.ID {
 				if peerIsInPeersList(peer, outcomingPeersList.Peers) == -1 {
+					color.Red("no connection, connecting to peer: " + peer.Port)
 					connectToPeer(peer)
 				}
 			}

@@ -30,21 +30,24 @@ func messageHandler(peer Peer, msg Msg) {
 	case "PeersList":
 		color.Blue("newPeerslist")
 		fmt.Println(msg.PeersList)
+		color.Red("PeersList")
 
-		//time.Sleep(1000 * time.Millisecond)
 		updateNetworkPeersList(peer.Conn, msg.PeersList)
 		propagatePeersList(peer)
 		printPeersList()
 		break
 	case "PeersList_Response":
-		color.Blue("newPeerslist")
+		//for the moment is not beeing used
+		color.Blue("newPeerslist, from PeersList_Response")
 		fmt.Println(msg.PeersList)
+		color.Red("PeersList_Response")
 
-		//time.Sleep(1000 * time.Millisecond)
 		updateNetworkPeersList(peer.Conn, msg.PeersList)
+		propagatePeersList(peer)
 		printPeersList()
 		break
 	case "Block":
+		//TODO check if the block is signed by an autorized emitter
 		if !blockchain.blockExists(msg.Block) {
 			blockchain.addBlock(msg.Block)
 			propagateBlock(msg.Block)

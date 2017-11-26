@@ -31,9 +31,6 @@ func randInt(min int, max int) int {
 	return r
 }
 func hashPeer(p Peer) string {
-	/*peerJson, err := json.Marshal(p)
-	check(err)
-	peerString := string(peerJson)*/
 	peerString := p.IP + ":" + p.Port
 
 	h := sha256.New()

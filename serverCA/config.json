@@ -1,0 +1,8 @@
+{
+    "ip": "127.0.0.1",
+    "port": "3030",
+    "serverip": "127.0.0.1",
+    "serverport": "3000",
+    "serverrestport": "3002",
+    "webserverport": "3080"
+}

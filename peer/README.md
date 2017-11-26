@@ -70,3 +70,4 @@ Needs the config.json file:
     - endpoint to get if the address is in the blockchain (to verify users)
 - parameters Date or LastUpdate on the structs needs to be updated values
 - implement rsa encryption between peers
+- store blockchain in a .data file
