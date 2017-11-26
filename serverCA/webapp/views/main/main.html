@@ -1,16 +1,45 @@
 <div class="container">
     <div class="row">
-        <div class="col-md-3">
-        </div>
         <div class="col-md-6">
             <div class="card">
-                {{peerslist.PeerID}}
-                <div class="card-body" style="max-height: 500px; overflow-y:scroll;">
-                    <div ng-repeat="peer in peerslist.peerslist">
-                        <b>{{peer.id}}</b> - {{peer.role}}
-                        <br>
-                        - {{peer.ip}}:{{peer.port}}, {{peer.restport}}
-                        <hr>
+                <div class="card-body">
+                    <h4 class="card-title">
+                        Peers
+                    </h4>
+                    {{peerslist.PeerID}}
+                    <div style="max-height: 500px; overflow-y:scroll;">
+                        <div ng-repeat="peer in peerslist.peerslist">
+                            <b>{{peer.id}}</b> - {{peer.role}}
+                            <br>
+                            - {{peer.ip}}:{{peer.port}}, {{peer.restport}}
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        Blockchain
+                    </h4>
+                    <div style="max-height: 500px; overflow-y:scroll;">
+                        <div ng-repeat="block in blockchain.blocks">
+                            Hash: <b>{{block.hash}}</b> - Height: {{block.height}}
+                            <br>
+                            Emitter: {{block.emitter}}
+                            <br>
+                            Date: {{block.date}}
+                            <br>
+                            Data: {{block.data}}
+                            <br>
+                            PreviousHash: {{block.previoushash}}
+                            <br>
+                            NextHash: {{block.nexthash}}
+                            <hr>
+                        </div>
                     </div>
                 </div>
             </div>

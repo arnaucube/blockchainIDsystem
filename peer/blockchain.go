@@ -81,6 +81,11 @@ func (bc *Blockchain) addBlock(block Block) error {
 func reconstructBlockchainFromBlock(urlAPI string, h string) {
 	color.Yellow("reconstructing the blockchain from last block in memory")
 	var block Block
+	var err error
+
+	block, err = blockchain.getBlockByHash(h)
+	check(err)
+
 	if h == "" {
 		//no genesis block yet
 		color.Green(urlAPI + "/blocks/genesis")
@@ -97,16 +102,18 @@ func reconstructBlockchainFromBlock(urlAPI string, h string) {
 		block.NextHash = h
 	}
 
-	for block.NextHash != "" {
+	for block.NextHash != "" && block.Hash != "" {
 		res, err := http.Get(urlAPI + "/blocks/next/" + block.Hash)
 		check(err)
 		body, err := ioutil.ReadAll(res.Body)
 		check(err)
 		err = json.Unmarshal(body, &block)
 		check(err)
-		color.Yellow("[New Block]: " + block.Hash)
-		err = blockchain.addBlock(block)
-		check(err)
+		if block.Hash != "" {
+			color.Yellow("[New Block]: " + block.Hash)
+			err = blockchain.addBlock(block)
+			check(err)
+		}
 	}
 	blockchain.print()
 }

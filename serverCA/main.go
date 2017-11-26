@@ -32,6 +32,8 @@ func main() {
 	//read configuration file
 	readConfig("config.json")
 
+	reconstructBlockchainFromBlock("http://"+config.IP+":"+config.ServerRESTPort, "")
+
 	//run thw webserver
 	go webserver()
 

@@ -19,4 +19,14 @@ angular.module('app.main', ['ngRoute'])
         }, function(data, status, headers, config) {
             console.log('data error');
         });
+
+        $scope.blockchain={};
+        $http.get(urlapi + 'blockchain')
+        .then(function(data, status, headers, config) {
+            console.log('data success');
+            console.log(data.data);
+            $scope.blockchain = data.data;
+        }, function(data, status, headers, config) {
+            console.log('data error');
+        });
     });
