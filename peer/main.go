@@ -32,6 +32,11 @@ func main() {
 	//read configuration file
 	readConfig("config.json")
 
+	//read the stored blockchain
+	err := blockchain.readFromDisk()
+	check(err)
+	blockchain.print()
+
 	//runningPeer.ID = strconv.Itoa(randInt(1, 1000)) //0 is reserved for server
 	runningPeer.IP = config.IP
 	runningPeer.Port = config.Port

@@ -75,6 +75,8 @@ func (bc *Blockchain) addBlock(block Block) error {
 	}
 	bc.Blocks = append(bc.Blocks, block)
 
+	bc.saveToDisk()
+
 	return nil
 }
 
@@ -128,4 +130,26 @@ func (bc *Blockchain) print() {
 		color.Green("Date: " + b.Date.String())
 		color.Green("---")
 	}
+}
+
+func (bc *Blockchain) readFromDisk() error {
+	file, err := ioutil.ReadFile("blockchain.data")
+	if err != nil {
+		return err
+	}
+	content := string(file)
+	json.Unmarshal([]byte(content), &bc)
+	return nil
+}
+
+func (bc *Blockchain) saveToDisk() error {
+	bytesBlockchain, err := json.Marshal(blockchain)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile("blockchain.data", bytesBlockchain, 0644)
+	if err != nil {
+		return err
+	}
+	return nil
 }

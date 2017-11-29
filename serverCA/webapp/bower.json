@@ -12,6 +12,7 @@
     "angular-bootstrap": "^2.5.0",
     "angular-messages": "^1.6.5",
     "components-font-awesome": "^4.7.0",
-    "angular-toastr": "^2.1.1"
+    "angular-toastr": "^2.1.1",
+    "cssMaterialColors": "*"
   }
 }
