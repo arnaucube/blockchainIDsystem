@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"time"
 
+	mgo "gopkg.in/mgo.v2"
+
 	"github.com/fatih/color"
 	"github.com/gorilla/handlers"
 )
@@ -26,13 +28,21 @@ type PeersList struct {
 
 var peersList PeersList
 
+var userCollection *mgo.Collection
+
 func main() {
 	color.Blue("Starting CA")
 
 	//read configuration file
 	readConfig("config.json")
-
 	reconstructBlockchainFromBlock("http://"+config.IP+":"+config.ServerRESTPort, "")
+
+	initializeToken()
+
+	//mongodb
+	session, err := getSession()
+	check(err)
+	userCollection = getCollection(session, "users")
 
 	//run thw webserver
 	go webserver()

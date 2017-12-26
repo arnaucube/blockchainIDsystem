@@ -4,5 +4,9 @@
     "serverip": "127.0.0.1",
     "serverport": "3000",
     "serverrestport": "3002",
-    "webserverport": "3080"
+    "webserverport": "3080",
+    "mongodb": {
+        "ip": "127.0.0.1:27017",
+        "database": "serverCA"
+    }
 }

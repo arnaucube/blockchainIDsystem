@@ -68,7 +68,9 @@ func reconstructBlockchainFromBlock(urlAPI string, h string) {
 	var err error
 
 	block, err = blockchain.getBlockByHash(h)
-	check(err)
+	if err != nil {
+		fmt.Println("reconstructBlockFromBlock: block with " + h + " not found. Getting genesis block")
+	}
 
 	if h == "" {
 		//no genesis block yet

@@ -24,17 +24,17 @@ There are different types of nodes:
 
 #### Step by step process
 1. Once all the nodes of the network are running, a new user can connect to the server-ID-signer.
-- The user registers a non anonymous user (using email, phone, password, etc), and performs the login with that user
-- The user, locally, generates a RSA key pair (private key & public key)
-- The user blinds his Public-Key with the server-ID-signer Public-Key
-- The user's Public-Key blinded, is sent to the server-ID-signer
-- The server-ID-signer Blind Signs the Public-Key blinded from the user, and returns it to the user
-- The user unblinds the Public-Key signed by the server-ID-signer, and now has the Public-Key Blind Signed by the server-ID-signer
-- The user sends the Public-Key blind signed to the p2p network
-- The peers verify that the Public-Key Blind Signed is correctly signed by the server-ID-signer, if it is, they add the Public-Key to the Blockchain, inside a new block
-- Then, when the user wants to login into a platform, just needs to put his Public-Key
-- The platform goes to the Blockchain, to check if this Public-Key is registered in the blockchain
-- The platform sends a message encrypted with the user Public-Key, and the user returns the message decrypted with the Private-Key, to verify that is the owner of that Public-Key
+2. The user registers a non anonymous user (using email, phone, password, etc), and performs the login with that user
+3. The user, locally, generates a RSA key pair (private key & public key)
+4. The user blinds his Public-Key with the server-ID-signer Public-Key
+5. The user's Public-Key blinded, is sent to the server-ID-signer
+6. The server-ID-signer Blind Signs the Public-Key blinded from the user, and returns it to the user
+7. The user unblinds the Public-Key signed by the server-ID-signer, and now has the Public-Key Blind Signed by the server-ID-signer
+8. The user sends the Public-Key blind signed to the p2p network
+9. The peers verify that the Public-Key Blind Signed is correctly signed by the server-ID-signer, if it is, they add the Public-Key to the Blockchain, inside a new block
+10. Then, when the user wants to login into a platform, just needs to put his Public-Key
+11. The platform goes to the Blockchain, to check if this Public-Key is registered in the blockchain
+12. The platform sends a message encrypted with the user Public-Key, and the user returns the message decrypted with the Private-Key, to verify that is the owner of that Public-Key
 
 
 ##### RSA encryption system
