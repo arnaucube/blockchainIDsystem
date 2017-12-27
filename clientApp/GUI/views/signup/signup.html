@@ -1,0 +1,41 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+
+        </div>
+        <div class="col-sm-4">
+            <div class="panel">
+                <div class="panel-heading c_deepPurpleG500to300">
+                    <h3 class="panel-title">Signup</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group label-floating">
+                        <input ng-model="user.username" abmFormControl class="form-control" id="inputUsername" placeholder="Username" type="text">
+                    </div>
+                    <div class="form-group">
+                        <input ng-model="user.password" abmFormControl class="form-control" id="inputPassword" placeholder="Password" type="password">
+                    </div>
+                    <div class="form-group label-floating">
+                        <input ng-model="user.email" abmFormControl class="form-control" id="inputEmail" placeholder="Email" type="text">
+                    </div>
+                    <div class="form-group label-floating">
+                        <input ng-model="user.phone" abmFormControl class="form-control" id="inputPhone" placeholder="Phone" type="text">
+                    </div>
+                    <div class="form-group row">
+                        <label for="staticEmail" class="col-sm-1 col-form-label">@</label>
+                        <div class="col-sm-10">
+                            <input ng-model="user.telegram" abmFormControl class="form-control" id="inputTelegram" placeholder="Telegram" type="text">
+                        </div>
+                    </div>
+                    <a ng-href="#!/login" class="btn btn-raised c_grey500">Back</a>
+                    <div ng-click="doSignup()" class="btn btn-raised c_deepPurple300 pull-right">Signup</div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-sm-4">
+
+        </div>
+    </div>
+</div>

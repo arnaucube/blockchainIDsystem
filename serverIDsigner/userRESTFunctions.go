@@ -125,7 +125,7 @@ func BlindSign(w http.ResponseWriter, r *http.Request) {
 		m = append(m, int(byte))
 	}
 
-	sigma := ownrsa.BlindSign(m, askBlindSign.PubK, serverRsa.PrivK) //here the privK will be the CA privK, not the m emmiter's one. The pubK is the user's one
+	sigma := ownrsa.BlindSign(m, askBlindSign.PubK, serverRSA.PrivK) //here the privK will be the CA privK, not the m emmiter's one. The pubK is the user's one
 	fmt.Print("Sigma': ")
 	fmt.Println(sigma)
 
@@ -164,7 +164,7 @@ func VerifySign(w http.ResponseWriter, r *http.Request) {
 		mSignedInts = append(mSignedInts, i)
 	}
 
-	verified := ownrsa.Verify(mOriginal, mSignedInts, serverRsa.PubK)
+	verified := ownrsa.Verify(mOriginal, mSignedInts, serverRSA.PubK)
 
 	fmt.Fprintln(w, verified)
 }

@@ -15,7 +15,7 @@ import (
 
 var userCollection *mgo.Collection
 
-var serverRsa ownrsa.RSA
+var serverRSA ownrsa.RSA
 
 func main() {
 	color.Blue("Starting serverIDsigner")
@@ -26,11 +26,11 @@ func main() {
 	initializeToken()
 
 	//initialize RSA
-	serverRsa = ownrsa.GenerateKeyPair()
+	serverRSA = ownrsa.GenerateKeyPair()
 	color.Blue("Public Key:")
-	fmt.Println(serverRsa.PubK)
+	fmt.Println(serverRSA.PubK)
 	color.Green("Private Key:")
-	fmt.Println(serverRsa.PrivK)
+	fmt.Println(serverRSA.PrivK)
 
 	//mongodb
 	session, err := getSession()
