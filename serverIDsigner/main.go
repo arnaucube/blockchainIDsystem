@@ -1,37 +1,41 @@
 package main
 
 import (
+	"fmt"
 	"log"
-	"net"
 	"net/http"
-	"time"
+
+	mgo "gopkg.in/mgo.v2"
 
 	"github.com/fatih/color"
 	"github.com/gorilla/handlers"
+
+	ownrsa "./ownrsa"
 )
 
-type Peer struct {
-	ID       string   `json:"id"` //in the future, this will be the peer hash
-	IP       string   `json:"ip"`
-	Port     string   `json:"port"`
-	RESTPort string   `json:"restport"`
-	Role     string   `json:"role"` //client or server
-	Conn     net.Conn `json:"conn"`
-}
-type PeersList struct {
-	PeerID string
-	Peers  []Peer    `json:"peerslist"`
-	Date   time.Time `json:"date"`
-}
+var userCollection *mgo.Collection
 
-var peersList PeersList
+var serverRsa ownrsa.RSA
 
 func main() {
-	color.Blue("Starting CA")
+	color.Blue("Starting serverIDsigner")
 
 	//read configuration file
 	readConfig("config.json")
-	reconstructBlockchainFromBlock("http://"+config.IP+":"+config.ServerRESTPort, "")
+
+	initializeToken()
+
+	//initialize RSA
+	serverRsa = ownrsa.GenerateKeyPair()
+	color.Blue("Public Key:")
+	fmt.Println(serverRsa.PubK)
+	color.Green("Private Key:")
+	fmt.Println(serverRsa.PrivK)
+
+	//mongodb
+	session, err := getSession()
+	check(err)
+	userCollection = getCollection(session, "users")
 
 	//run thw webserver
 	go webserver()

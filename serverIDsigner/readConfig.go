@@ -7,12 +7,14 @@ import (
 
 //Config reads the config
 type Config struct {
-	IP             string `json:"ip"`
-	Port           string `json:"port"`
-	ServerIP       string `json:"serverip"`
-	ServerPort     string `json:"serverport"`
-	ServerRESTPort string `json:"serverrestport"`
-	WebServerPort  string `json:"webserverport"`
+	IP            string      `json:"ip"`
+	Port          string      `json:"port"`
+	WebServerPort string      `json:"webserverport"`
+	Mongodb       MongoConfig `json:"mongodb"`
+}
+type MongoConfig struct {
+	IP       string `json:"ip"`
+	Database string `json:"database"`
 }
 
 var config Config

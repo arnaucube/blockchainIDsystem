@@ -21,35 +21,4 @@ var routes = Routes{
 		"/blockchain",
 		GetBlockchain,
 	},
-	/*
-		POST	/signup
-		POST	/loginuser
-		POST	/blindsign
-		POST	/verifysign
-
-	*/
-	Route{
-		"Signup",
-		"POST",
-		"/signup",
-		Signup,
-	},
-	Route{
-		"Login",
-		"POST",
-		"/login",
-		Login,
-	},
-	Route{
-		"BlindSign",
-		"POST",
-		"/blindsign",
-		BlindSign,
-	},
-	Route{
-		"VerifySign",
-		"POST",
-		"/verifysign",
-		VerifySign,
-	},
 }

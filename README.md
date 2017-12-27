@@ -17,6 +17,7 @@ There are different types of nodes:
 - serverCA
     - Is a REST server that has been certified (is the Certified Authority) to validate the peers that will be able to participate of the blockchain.
     - Have the webapp (frontend) to validate peers through a GUI interface
+    - The GUI frontend webapp allows also to view the current peers of the network and the blocks of the blockchain
 - server-ID-signer
     - The server where the user creates a non anonymous account
     - Also is the server that blind signs the Anonymous ID of the users

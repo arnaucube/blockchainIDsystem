@@ -4,8 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"gopkg.in/mgo.v2/bson"
+
+	ownrsa "./ownrsa"
 )
 
 type User struct {
@@ -15,8 +19,12 @@ type User struct {
 	Token    string        `json:"token"`
 }
 
+func Index(w http.ResponseWriter, r *http.Request) {
+	//TODO return the public key, to allow others verifign signed strings by this server
+	fmt.Fprintln(w, "serverIDsigner")
+}
+
 func Signup(w http.ResponseWriter, r *http.Request) {
-	//ipFilter(w, r)
 
 	decoder := json.NewDecoder(r.Body)
 	var user User
@@ -50,7 +58,6 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	//ipFilter(w, r)
 
 	decoder := json.NewDecoder(r.Body)
 	var user User
@@ -75,9 +82,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		err = userCollection.Update(bson.M{"_id": rUser.Id}, user)
 		check(err)
 	}
-	//generate the token
-	//add the token to the user
-	//save the user with the new token
 
 	jResp, err := json.Marshal(user)
 	if err != nil {
@@ -91,37 +95,76 @@ type Sign struct {
 	C string `json:"c"`
 }
 
-func BlindSign(w http.ResponseWriter, r *http.Request) {
-	//ipFilter(w, r)
-
-	decoder := json.NewDecoder(r.Body)
-	var user User
-	err := decoder.Decode(&user)
-	if err != nil {
-		panic(err)
-	}
-	defer r.Body.Close()
-
-	jResp, err := json.Marshal(user)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Fprintln(w, string(jResp))
+type AskBlindSign struct {
+	PubKString ownrsa.RSAPublicKeyString `json:"pubKstring"`
+	PubK       ownrsa.RSAPublicKey       `json:"pubK"`
+	M          string                    `json:"m"`
 }
-func VerifySign(w http.ResponseWriter, r *http.Request) {
-	//ipFilter(w, r)
 
+func BlindSign(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.Body)
 	decoder := json.NewDecoder(r.Body)
-	var user User
-	err := decoder.Decode(&user)
+	var askBlindSign AskBlindSign
+	err := decoder.Decode(&askBlindSign)
 	if err != nil {
 		panic(err)
 	}
 	defer r.Body.Close()
 
-	jResp, err := json.Marshal(user)
+	fmt.Println(askBlindSign)
+	askBlindSign.PubK, err = ownrsa.PubKStringToBigInt(askBlindSign.PubKString)
+	if err != nil {
+		fmt.Fprintln(w, "error")
+		return
+	}
+
+	//convert msg to []int
+	var m []int
+	mBytes := []byte(askBlindSign.M)
+	for _, byte := range mBytes {
+		m = append(m, int(byte))
+	}
+
+	sigma := ownrsa.BlindSign(m, askBlindSign.PubK, serverRsa.PrivK) //here the privK will be the CA privK, not the m emmiter's one. The pubK is the user's one
+	fmt.Print("Sigma': ")
+	fmt.Println(sigma)
+
+	fmt.Fprintln(w, sigma)
+}
+
+type PetitionVerifySign struct {
+	M       string `json:"m"`
+	MSigned string `json:"mSigned"`
+}
+
+func VerifySign(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var petitionVerifySign PetitionVerifySign
+	err := decoder.Decode(&petitionVerifySign)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Fprintln(w, string(jResp))
+	defer r.Body.Close()
+
+	fmt.Println(petitionVerifySign)
+
+	//convert M to []int
+	var mOriginal []int
+	mBytes := []byte(petitionVerifySign.M)
+	for _, byte := range mBytes {
+		mOriginal = append(mOriginal, int(byte))
+	}
+
+	//convert MSigned to []int
+	var mSignedInts []int
+	mSignedString := strings.Split(petitionVerifySign.MSigned, " ")
+	for _, s := range mSignedString {
+		i, err := strconv.Atoi(s)
+		check(err)
+		mSignedInts = append(mSignedInts, i)
+	}
+
+	verified := ownrsa.Verify(mOriginal, mSignedInts, serverRsa.PubK)
+
+	fmt.Fprintln(w, verified)
 }

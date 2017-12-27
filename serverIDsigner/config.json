@@ -1,0 +1,9 @@
+{
+    "ip": "127.0.0.1",
+    "port": "3130",
+    "webserverport": "3180",
+    "mongodb": {
+        "ip": "127.0.0.1:27017",
+        "database": "serverIDsigner"
+    }
+}
