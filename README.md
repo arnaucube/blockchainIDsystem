@@ -1,8 +1,19 @@
 # blockchainIDsystem
 A blockchain based anonymous distributed login system
 
+### Warning! Academical version
+This version is only for academical purposes, is not a version to run in production. Everything has been developed from scratch (the p2p network, the blockchain, the RSA library, ...) to learn it deeply.
+Also this version is not finished.
+
+A new version of this project, being developed using libaries and Ethereum network, is in https://github.com/arnaucode/darkID
+
 ### Main concept
 The objective is to guarantee a decentralized login system, but making sure that registered users are real ones and there are no bots generating large amounts of accounts. Only the verified (by email or phone) users can generate an anonymous ID (the Public-Key blind signed).
+
+
+![screenshot](https://raw.githubusercontent.com/arnaucode/blockchainIDsystem/master/documentation/screenshot01.png "screenshot")
+
+![screenshot](https://raw.githubusercontent.com/arnaucode/blockchainIDsystem/master/documentation/screenshot02.png "screenshot")
 
 ## How it works?
 

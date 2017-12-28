@@ -6,26 +6,33 @@
         <div class="col-sm-8">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">
-                        blockchainIDsystem
-                    </h4>
-                    <p>
-                        Generate new ID
-                        <div ng-click="newID()" class="btn btn-raised pull-right c_o_cyan300">Create new ID</div>
-                    </p>
+                    <div ng-click="newID()" class="btn btn-raised c_o_pink300">Create new ID</div>
                 </div>
+                <hr>
                 <div class="card-body">
                     <h4 class="card-title">
-                        Current IDs
+                        My IDs
                     </h4>
-                    <div class="row" ng-repeat="id in ids">
+                    <div class="row" style="height:200px;" ng-repeat="id in ids">
                         <div class="col-sm-6">
                             Public Key: {{id.pubK}}
-                            <br> Private Key: {{id.privK}}
+                            <!--<br> Private Key: {{id.privK}}-->
                             <br> Date of creation: {{id.date}}
+                            <!--<br> {{id.pubKSigned}}-->
+                            <br>
+                            <br><br>
                         </div>
                         <div class="col-sm-6">
-                            <div ng-click="blindAndVerify(id.pubK)" class="btn btn-raised c_o_indigo300">Blind & Send to serverIDsigner</div>
+                            <div class="pull-right">
+                                <span class="badge c_o_red300" ng-show="!id.verified">Not verified</span>
+                                <span class="badge c_o_green300" ng-show="id.verified">Verified</span>
+                            </div>
+                            <div class="pull-right">
+                                <span class="badge c_o_orange300" ng-show="!id.pubKSigned">Not signed</span>
+                                <span class="badge c_o_green300" ng-show="id.pubKSigned">Signed</span>
+                            </div>
+                            <div ng-click="blindAndSendToSign(id.pubK)" ng-show="!id.pubKSigned" class="btn btn-sm btn-raised c_o_cyan300 pull-right">Send to serverIDsigner</div>
+                            <div ng-click="verify(id.pubK)"  ng-show="!id.verified"class="btn btn-sm btn-raised c_o_deepPurple300 pull-right">Verify</div>
                         </div>
                     </div>
                 </div>

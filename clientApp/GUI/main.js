@@ -17,9 +17,9 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 850,
     height: 600,
-    icon: 'icon.png'
+    icon: 'img/blockchainIDsystem-logo-white.png'
   })
-  tray = new Tray('icon.png')
+  tray = new Tray('img/blockchainIDsystem-logo-white.png')
   const contextMenu = Menu.buildFromTemplate([
     {label: 'Obre la finestra', type: 'radio'},
     {label: 'javascript madness', type: 'radio'},
@@ -29,7 +29,7 @@ function createWindow () {
   tray.setToolTip('Panopticon, projectNSA')
   tray.setContextMenu(contextMenu)
 
-  //mainWindow.setMenu(null);
+  mainWindow.setMenu(null);
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`)

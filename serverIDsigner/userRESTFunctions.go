@@ -22,7 +22,12 @@ type User struct {
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	//TODO return the public key, to allow others verifign signed strings by this server
-	fmt.Fprintln(w, "serverIDsigner")
+
+	jResp, err := json.Marshal(serverRSA.PubK)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Fprintln(w, string(jResp))
 }
 
 func Signup(w http.ResponseWriter, r *http.Request) {

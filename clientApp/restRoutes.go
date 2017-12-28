@@ -22,9 +22,15 @@ var routes = Routes{
 		NewID,
 	},
 	Route{
-		"BlindAndVerify",
+		"BlindAndSendToSign",
 		"GET",
-		"/blindandverify/{pubK}",
-		BlindAndVerify,
+		"/blindandsendtosign/{pubK}",
+		BlindAndSendToSign,
+	},
+	Route{
+		"Verify",
+		"GET",
+		"/verify/{pubK}",
+		Verify,
 	},
 }

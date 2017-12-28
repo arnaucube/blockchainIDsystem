@@ -33,8 +33,19 @@ angular.module('app.main', ['ngRoute'])
                 });
         };
 
-        $scope.blindAndVerify = function(pubK) {
-            $http.get(clientapi + 'blindandverify/' + pubK)
+        $scope.blindAndSendToSign = function(pubK) {
+            $http.get(clientapi + 'blindandsendtosign/' + pubK)
+                .then(function(data) {
+                    console.log('data success');
+                    console.log(data);
+                    $scope.ids = data.data;
+
+                }, function(data) {
+                    console.log('data error');
+                });
+        };
+        $scope.verify = function(pubK) {
+            $http.get(clientapi + 'verify/' + pubK)
                 .then(function(data) {
                     console.log('data success');
                     console.log(data);

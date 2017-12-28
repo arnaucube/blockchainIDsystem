@@ -33,6 +33,7 @@ type PackRSA struct {
 	PrivK      string    `json:"privK"`
 	Date       time.Time `json:"date"`
 	PubKSigned string    `json:"pubKSigned"`
+	Verified   bool      `json:"verified"`
 }
 
 const maxPrime = 500

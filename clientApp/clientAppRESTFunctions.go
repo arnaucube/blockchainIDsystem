@@ -50,7 +50,7 @@ type AskBlindSign struct {
 	M string `json:"m"`
 }
 
-func BlindAndVerify(w http.ResponseWriter, r *http.Request) {
+func BlindAndSendToSign(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	packPubK := vars["pubK"]
 	color.Green(packPubK)
@@ -61,9 +61,6 @@ func BlindAndVerify(w http.ResponseWriter, r *http.Request) {
 	var key ownrsa.RSA
 	//search for complete key
 	for _, k := range keys {
-		fmt.Println(k.PubK)
-		fmt.Println(packPubK)
-		fmt.Println("")
 		if k.PubK == packPubK {
 			key = ownrsa.UnpackKey(k)
 		}
@@ -104,10 +101,69 @@ func BlindAndVerify(w http.ResponseWriter, r *http.Request) {
 	sigma := ownrsa.StringToArrayInt(askBlindSign.M, "_")
 	fmt.Println(sigma)
 
+	//get the serverIDsigner pubK
+	serverPubK := getServerPubK("http://" + config.ServerIDSigner.IP + ":" + config.ServerIDSigner.Port)
+
 	//unblind the response
-	//TODO
-	//després de la blindsign response, demanar al serverIDsigner la pubK
-	//unblinded := ownrsa.Unblind(sigma, rVal, )
+	mSigned := ownrsa.Unblind(sigma, rVal, serverPubK)
+	fmt.Print("mSigned: ")
+	fmt.Println(mSigned)
+
+	verified := ownrsa.Verify(m, mSigned, serverPubK)
+	fmt.Println(verified)
+
+	var iKey int
+	for i, k := range keys {
+		if k.PubK == packPubK {
+			iKey = i
+			//save to k the key updated
+			k.PubKSigned = ownrsa.ArrayIntToString(mSigned, "_")
+			k.Verified = verified
+		}
+		fmt.Println(k)
+	}
+	keys[iKey].PubKSigned = ownrsa.ArrayIntToString(mSigned, "_")
+	keys[iKey].Verified = verified
+	fmt.Println(keys)
+	saveKeys(keys, "keys.json")
+
+	jResp, err := json.Marshal(keys)
+	check(err)
+	fmt.Fprintln(w, string(jResp))
+}
+
+func Verify(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	packPubK := vars["pubK"]
+	color.Green(packPubK)
+
+	//read the keys stored in /keys directory
+	keys := readKeys("keys.json")
+
+	var key ownrsa.PackRSA
+	//search for complete key
+	for _, k := range keys {
+		if k.PubK == packPubK {
+			key = k
+		}
+	}
+
+	//get the serverIDsigner pubK
+	serverPubK := getServerPubK("http://" + config.ServerIDSigner.IP + ":" + config.ServerIDSigner.Port)
+	m := ownrsa.StringToArrayInt(key.PubK, "_")
+	mSigned := ownrsa.StringToArrayInt(key.PubKSigned, "_")
+
+	verified := ownrsa.Verify(m, mSigned, serverPubK)
+	fmt.Println(verified)
+
+	for _, k := range keys {
+		if k.PubK == packPubK {
+			//save to k the key updated
+			k.PubKSigned = ownrsa.ArrayIntToString(mSigned, "_")
+			k.Verified = verified
+		}
+	}
+	saveKeys(keys, "keys.json")
 
 	jResp, err := json.Marshal(keys)
 	check(err)
