@@ -10,9 +10,9 @@ curl -X POST http://127.0.0.1:3130/login -d '{"email": "user1@e.com", "password"
 echo ""
 echo "send pubK and m to blind sign"
 echo "json to send to the serverIDsigner:"
-echo '{"pubKstring": {"e": "65537", "n": "139093"}, "m": "hola"}'
+echo '{"m": "hola"}'
 echo "serverIDsigner response:"
-BLINDSIGNED=$(curl -X POST http://127.0.0.1:3130/blindsign -d '{"pubKstring": {"e": "65537", "n": "139093"}, "m": "hola"}')
+BLINDSIGNED=$(curl -X POST http://127.0.0.1:3130/blindsign -d '{"m": "hola"}')
 echo "$BLINDSIGNED"
 
 echo ""

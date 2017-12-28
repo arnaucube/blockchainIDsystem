@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/fatih/color"
 	"gopkg.in/mgo.v2/bson"
 
 	ownrsa "./ownrsa"
@@ -96,13 +97,12 @@ type Sign struct {
 }
 
 type AskBlindSign struct {
-	PubKString ownrsa.RSAPublicKeyString `json:"pubKstring"`
-	PubK       ownrsa.RSAPublicKey       `json:"pubK"`
-	M          string                    `json:"m"`
+	/*PubKString ownrsa.RSAPublicKeyString `json:"pubKstring"`
+	PubK       ownrsa.RSAPublicKey       `json:"pubK"`*/
+	M string `json:"m"`
 }
 
 func BlindSign(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.Body)
 	decoder := json.NewDecoder(r.Body)
 	var askBlindSign AskBlindSign
 	err := decoder.Decode(&askBlindSign)
@@ -110,26 +110,36 @@ func BlindSign(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	defer r.Body.Close()
-
+	color.Red(askBlindSign.M)
 	fmt.Println(askBlindSign)
+
+	/*fmt.Println(askBlindSign)
 	askBlindSign.PubK, err = ownrsa.PubKStringToBigInt(askBlindSign.PubKString)
 	if err != nil {
 		fmt.Fprintln(w, "error")
 		return
-	}
+	}*/
 
 	//convert msg to []int
-	var m []int
+	/*var m []int
 	mBytes := []byte(askBlindSign.M)
 	for _, byte := range mBytes {
 		m = append(m, int(byte))
-	}
+	}*/
 
-	sigma := ownrsa.BlindSign(m, askBlindSign.PubK, serverRSA.PrivK) //here the privK will be the CA privK, not the m emmiter's one. The pubK is the user's one
+	m := ownrsa.StringToArrayInt(askBlindSign.M, "_")
+
+	sigma := ownrsa.BlindSign(m, serverRSA.PrivK) //here the privK will be the CA privK, not the m emmiter's one. The pubK is the user's one
 	fmt.Print("Sigma': ")
 	fmt.Println(sigma)
+	sigmaString := ownrsa.ArrayIntToString(sigma, "_")
+	askBlindSign.M = sigmaString
 
-	fmt.Fprintln(w, sigma)
+	jResp, err := json.Marshal(askBlindSign)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Fprintln(w, string(jResp))
 }
 
 type PetitionVerifySign struct {

@@ -1,11 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	ownrsa "./ownrsa"
+	"github.com/fatih/color"
+	"github.com/gorilla/mux"
 )
 
 //generate key pair
@@ -30,11 +34,80 @@ func NewID(w http.ResponseWriter, r *http.Request) {
 	newKey := ownrsa.GenerateKeyPair()
 
 	key := ownrsa.PackKey(newKey)
+	key.Date = time.Now()
 	fmt.Println(key)
 
 	keys := readKeys("keys.json")
 	keys = append(keys, key)
 	saveKeys(keys, "keys.json")
+
+	jResp, err := json.Marshal(keys)
+	check(err)
+	fmt.Fprintln(w, string(jResp))
+}
+
+type AskBlindSign struct {
+	M string `json:"m"`
+}
+
+func BlindAndVerify(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	packPubK := vars["pubK"]
+	color.Green(packPubK)
+
+	//read the keys stored in /keys directory
+	keys := readKeys("keys.json")
+
+	var key ownrsa.RSA
+	//search for complete key
+	for _, k := range keys {
+		fmt.Println(k.PubK)
+		fmt.Println(packPubK)
+		fmt.Println("")
+		if k.PubK == packPubK {
+			key = ownrsa.UnpackKey(k)
+		}
+	}
+	//blind the key.PubK
+	var m []int
+	//convert packPubK to []bytes
+	mBytes := []byte(packPubK)
+	for _, byte := range mBytes {
+		m = append(m, int(byte))
+	}
+	rVal := 101
+	blinded := ownrsa.Blind(m, rVal, key.PubK, key.PrivK)
+	fmt.Println(blinded)
+
+	//convert blinded to string
+	var askBlindSign AskBlindSign
+	askBlindSign.M = ownrsa.ArrayIntToString(blinded, "_")
+
+	//send to the serverIDsigner the key.PubK blinded
+	color.Green(askBlindSign.M)
+	body := new(bytes.Buffer)
+	json.NewEncoder(body).Encode(askBlindSign)
+	res, err := http.Post("http://"+config.ServerIDSigner.IP+":"+config.ServerIDSigner.Port+"/blindsign", "application/json", body)
+	check(err)
+	fmt.Println(res)
+
+	decoder := json.NewDecoder(res.Body)
+	//var sigmaString string
+	err = decoder.Decode(&askBlindSign)
+	if err != nil {
+		panic(err)
+	}
+	defer r.Body.Close()
+
+	fmt.Println("sigmaString")
+	fmt.Println(askBlindSign)
+	sigma := ownrsa.StringToArrayInt(askBlindSign.M, "_")
+	fmt.Println(sigma)
+
+	//unblind the response
+	//TODO
+	//després de la blindsign response, demanar al serverIDsigner la pubK
+	//unblinded := ownrsa.Unblind(sigma, rVal, )
 
 	jResp, err := json.Marshal(keys)
 	check(err)

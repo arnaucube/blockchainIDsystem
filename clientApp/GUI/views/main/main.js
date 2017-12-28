@@ -32,4 +32,16 @@ angular.module('app.main', ['ngRoute'])
                     console.log('data error');
                 });
         };
+
+        $scope.blindAndVerify = function(pubK) {
+            $http.get(clientapi + 'blindandverify/' + pubK)
+                .then(function(data) {
+                    console.log('data success');
+                    console.log(data);
+                    $scope.ids = data.data;
+
+                }, function(data) {
+                    console.log('data error');
+                });
+        };
     });

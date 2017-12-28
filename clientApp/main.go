@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -12,6 +13,7 @@ func main() {
 	color.Blue("Starting blockchainIDsystem clientApp")
 
 	readConfig("config.json")
+	fmt.Println(config)
 
 	//run thw webserver
 	go GUI()

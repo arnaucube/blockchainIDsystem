@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/big"
 	"math/rand"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -25,6 +26,13 @@ type RSAPrivateKey struct {
 type RSA struct {
 	PubK  RSAPublicKey
 	PrivK RSAPrivateKey
+}
+
+type PackRSA struct {
+	PubK       string    `json:"pubK"`
+	PrivK      string    `json:"privK"`
+	Date       time.Time `json:"date"`
+	PubKSigned string    `json:"pubKSigned"`
 }
 
 const maxPrime = 500
@@ -113,11 +121,11 @@ func Blind(m []int, r int, pubK RSAPublicKey, privK RSAPrivateKey) []int {
 	return mBlinded
 }
 
-func BlindSign(m []int, pubK RSAPublicKey, privK RSAPrivateKey) []int {
+func BlindSign(m []int, privK RSAPrivateKey) []int {
 	var r []int
 	for i := 0; i < len(m); i++ {
 		mBigInt := big.NewInt(int64(m[i]))
-		sigma := new(big.Int).Exp(mBigInt, privK.D, pubK.N)
+		sigma := new(big.Int).Exp(mBigInt, privK.D, privK.N)
 		r = append(r, int(sigma.Int64()))
 	}
 	return r
@@ -183,11 +191,6 @@ func PubKStringToBigInt(kS RSAPublicKeyString) (RSAPublicKey, error) {
 	return k, nil
 }
 
-type PackRSA struct {
-	PubK  string `json:"pubK"`
-	PrivK string `json:"privK"`
-}
-
 func PackKey(k RSA) PackRSA {
 	var p PackRSA
 	p.PubK = k.PubK.E.String() + "," + k.PubK.N.String()
@@ -206,4 +209,20 @@ func UnpackKey(p PackRSA) RSA {
 		fmt.Println("error on Unpacking Keys")
 	}
 	return k
+}
+
+func ArrayIntToString(a []int, delim string) string {
+	return strings.Trim(strings.Replace(fmt.Sprint(a), " ", delim, -1), "[]")
+}
+func StringToArrayInt(s string, delim string) []int {
+	var a []int
+	arrayString := strings.Split(s, delim)
+	for _, s := range arrayString {
+		i, err := strconv.Atoi(s)
+		if err != nil {
+			fmt.Println(err)
+		}
+		a = append(a, i)
+	}
+	return a
 }

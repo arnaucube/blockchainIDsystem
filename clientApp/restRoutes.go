@@ -21,4 +21,10 @@ var routes = Routes{
 		"/newid",
 		NewID,
 	},
+	Route{
+		"BlindAndVerify",
+		"GET",
+		"/blindandverify/{pubK}",
+		BlindAndVerify,
+	},
 }

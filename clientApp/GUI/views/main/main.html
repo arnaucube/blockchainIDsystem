@@ -1,29 +1,37 @@
 <div class="container">
     <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-2">
 
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-8">
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">
                         blockchainIDsystem
                     </h4>
-
-                    <div ng-click="newID()" class="btn btn-raised c_o_cyan300">Create new ID</div>
+                    <p>
+                        Generate new ID
+                        <div ng-click="newID()" class="btn btn-raised pull-right c_o_cyan300">Create new ID</div>
+                    </p>
                 </div>
-                <hr>
                 <div class="card-body">
                     <h4 class="card-title">
                         Current IDs
                     </h4>
-                    <p ng-repeat="id in ids">
-                        {{id}} <div ng-click="" class="btn btn-raised c_o_indigo300">Verify</div>
-                    </p>
+                    <div class="row" ng-repeat="id in ids">
+                        <div class="col-sm-6">
+                            Public Key: {{id.pubK}}
+                            <br> Private Key: {{id.privK}}
+                            <br> Date of creation: {{id.date}}
+                        </div>
+                        <div class="col-sm-6">
+                            <div ng-click="blindAndVerify(id.pubK)" class="btn btn-raised c_o_indigo300">Blind & Send to serverIDsigner</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-2">
 
         </div>
 
