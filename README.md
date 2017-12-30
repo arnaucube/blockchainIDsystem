@@ -1,7 +1,9 @@
 # blockchainIDsystem
 A blockchain based anonymous distributed login system
 
-### Warning! Academical version
+Outdated repository. The current repository being developed is: https://github.com/arnaucode/darkID
+
+### Warning! Academical version. Outdated repository.
 This version is only for academical purposes, is not a version to run in production. Everything has been developed from scratch (the p2p network, the blockchain, the RSA library, ...) to learn it deeply.
 Also this version is not finished.
 

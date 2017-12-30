@@ -58,13 +58,19 @@ func BlindAndSendToSign(w http.ResponseWriter, r *http.Request) {
 	//read the keys stored in /keys directory
 	keys := readKeys("keys.json")
 
-	var key ownrsa.RSA
-	//search for complete key
-	for _, k := range keys {
-		if k.PubK == packPubK {
-			key = ownrsa.UnpackKey(k)
+	/*
+		var key ownrsa.RSA
+		//search for complete key
+		for _, k := range keys {
+			if k.PubK == packPubK {
+				key = ownrsa.UnpackKey(k)
+			}
 		}
-	}
+	*/
+
+	//get the serverIDsigner pubK
+	serverPubK := getServerPubK("http://" + config.ServerIDSigner.IP + ":" + config.ServerIDSigner.Port)
+
 	//blind the key.PubK
 	var m []int
 	//convert packPubK to []bytes
@@ -73,7 +79,7 @@ func BlindAndSendToSign(w http.ResponseWriter, r *http.Request) {
 		m = append(m, int(byte))
 	}
 	rVal := 101
-	blinded := ownrsa.Blind(m, rVal, key.PubK, key.PrivK)
+	blinded := ownrsa.Blind(m, rVal, serverPubK)
 	fmt.Println(blinded)
 
 	//convert blinded to string
@@ -100,9 +106,6 @@ func BlindAndSendToSign(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(askBlindSign)
 	sigma := ownrsa.StringToArrayInt(askBlindSign.M, "_")
 	fmt.Println(sigma)
-
-	//get the serverIDsigner pubK
-	serverPubK := getServerPubK("http://" + config.ServerIDSigner.IP + ":" + config.ServerIDSigner.Port)
 
 	//unblind the response
 	mSigned := ownrsa.Unblind(sigma, rVal, serverPubK)

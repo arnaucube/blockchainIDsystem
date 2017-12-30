@@ -109,14 +109,14 @@ func DecryptInt(val int, privK RSAPrivateKey) int {
 	return int(m.Int64())
 }
 
-func Blind(m []int, r int, pubK RSAPublicKey, privK RSAPrivateKey) []int {
+func Blind(m []int, r int, pubK RSAPublicKey) []int {
 	var mBlinded []int
 	rBigInt := big.NewInt(int64(r))
 	for i := 0; i < len(m); i++ {
 		mBigInt := big.NewInt(int64(m[i]))
 		rE := new(big.Int).Exp(rBigInt, pubK.E, nil)
 		mrE := new(big.Int).Mul(mBigInt, rE)
-		mrEmodN := new(big.Int).Mod(mrE, privK.N)
+		mrEmodN := new(big.Int).Mod(mrE, pubK.N)
 		mBlinded = append(mBlinded, int(mrEmodN.Int64()))
 	}
 	return mBlinded
