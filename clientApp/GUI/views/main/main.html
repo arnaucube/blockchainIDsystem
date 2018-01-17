@@ -23,7 +23,7 @@
                             <div ng-click="clientApp('blindandsendtosign', id.pubK)" ng-show="!id.unblindedsig" class="btn btn-raised btn-sm c_o_cyan300">
                                 Send to serverIDsigner
                             </div>
-                            <div ng-click="clientApp('addtoblockchain', id.pubK)" ng-show="id.unblindedsig && !id.blockchainref" class="btn btn-raised btn-sm c_o_deepPurple300">
+                            <div ng-click="addToBlockchain(id.pubK)" ng-show="id.unblindedsig && !id.blockchainref" class="btn btn-raised btn-sm c_o_deepPurple300">
                                 <i title="" class="fa fa-chain"></i> Add to blockchain
                             </div>
                             <a ng-href="#!/id/{{id.pubK}}" ng-show="id.blockchainref" class="btn btn-raised btn-sm c_o_green300">

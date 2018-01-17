@@ -9,7 +9,7 @@ angular.module('app.main', ['ngRoute'])
         });
     }])
 
-    .controller('MainCtrl', function($scope, $rootScope, $http) {
+    .controller('MainCtrl', function($scope, $rootScope, $http, toastr) {
 
         $rootScope.server = JSON.parse(localStorage.getItem("old_darkID_server"));
 
@@ -70,6 +70,23 @@ angular.module('app.main', ['ngRoute'])
 
                 }, function(data) {
                     console.log('data error');
+                });
+        };
+        $scope.addToBlockchain = function(id) {
+            $http({
+                    url: 'http://127.0.0.1:3002/register',
+                    method: "POST",
+                    headers: {
+                        "Content-Type": undefined
+                    },
+                    data: {address: id}
+                })
+                .then(function(data) {
+                    //$scope.ids = data.data;
+                    toastr.success("added to blockchain");
+                },
+                function(data) {
+                    console.log(data);
                 });
         };
     });
