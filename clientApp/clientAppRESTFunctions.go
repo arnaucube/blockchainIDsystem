@@ -20,6 +20,11 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "serverIDsigner")
 }
 
+func GetServer(w http.ResponseWriter, r *http.Request) {
+	color.Green(config.ServerIDSigner)
+	fmt.Println(string(config.ServerIDSigner))
+	fmt.Fprintln(w, string(config.ServerIDSigner))
+}
 func IDs(w http.ResponseWriter, r *http.Request) {
 	//read the keys stored in /keys directory
 	keys := readKeys("keys.json")
@@ -69,7 +74,7 @@ func BlindAndSendToSign(w http.ResponseWriter, r *http.Request) {
 	*/
 
 	//get the serverIDsigner pubK
-	serverPubK := getServerPubK("http://" + config.ServerIDSigner.IP + ":" + config.ServerIDSigner.Port)
+	serverPubK := getServerPubK("http://" + config.ServerIDSigner)
 
 	//blind the key.PubK
 	var m []int
@@ -90,7 +95,7 @@ func BlindAndSendToSign(w http.ResponseWriter, r *http.Request) {
 	color.Green(askBlindSign.M)
 	body := new(bytes.Buffer)
 	json.NewEncoder(body).Encode(askBlindSign)
-	res, err := http.Post("http://"+config.ServerIDSigner.IP+":"+config.ServerIDSigner.Port+"/blindsign", "application/json", body)
+	res, err := http.Post("http://"+config.ServerIDSigner+"/blindsign", "application/json", body)
 	check(err)
 	fmt.Println(res)
 
@@ -117,13 +122,16 @@ func BlindAndSendToSign(w http.ResponseWriter, r *http.Request) {
 
 	var iKey int
 	for i, k := range keys {
+		color.Green(k.PubK)
+		color.Blue(packPubK)
 		if k.PubK == packPubK {
 			iKey = i
 			//save to k the key updated
-			k.PubKSigned = ownrsa.ArrayIntToString(mSigned, "_")
-			k.Verified = verified
+			keys[i].PubKSigned = ownrsa.ArrayIntToString(mSigned, "_")
+			keys[i].Verified = verified
+			keys[i].UnblindedSig = ownrsa.ArrayIntToString(mSigned, "_")
 		}
-		fmt.Println(k)
+		fmt.Println(keys[i])
 	}
 	keys[iKey].PubKSigned = ownrsa.ArrayIntToString(mSigned, "_")
 	keys[iKey].Verified = verified
@@ -152,7 +160,7 @@ func Verify(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//get the serverIDsigner pubK
-	serverPubK := getServerPubK("http://" + config.ServerIDSigner.IP + ":" + config.ServerIDSigner.Port)
+	serverPubK := getServerPubK("http://" + config.ServerIDSigner)
 	m := ownrsa.StringToArrayInt(key.PubK, "_")
 	mSigned := ownrsa.StringToArrayInt(key.PubKSigned, "_")
 

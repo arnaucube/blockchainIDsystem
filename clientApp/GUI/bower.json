@@ -1,6 +1,6 @@
 {
-  "name": "angular-seed",
-  "description": "A starter project for AngularJS",
+  "name": "darkID-clientApp",
+  "description": "",
   "version": "0.0.0",
   "homepage": "",
   "license": "MIT",
@@ -13,6 +13,7 @@
     "angular-bootstrap": "^2.5.0",
     "components-font-awesome": "^4.7.0",
     "angular-toastr": "^2.1.1",
-    "cssMaterialColors": "*"
+    "cssMaterialColors": "*",
+    "angular-chart.js": "^1.1.1"
   }
 }

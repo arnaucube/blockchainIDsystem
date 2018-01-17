@@ -1,6 +1,6 @@
 'use strict';
 
-var urlapi = "http://127.0.0.1:3130/";
+
 var clientapi = "http://127.0.0.1:4100/";
 
 // Declare app level module which depends on views, and components
@@ -10,15 +10,18 @@ angular.module('app', [
     'angularBootstrapMaterial',
     'ui.bootstrap',
     'toastr',
+    'chart.js',
     'app.navbar',
     'app.main',
     'app.signup',
-    'app.login'
+    'app.login',
+    'app.id',
+    'app.stats'
 ]).
 config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
         $locationProvider.hashPrefix('!');
 
-        if ((localStorage.getItem('blid_token'))) {
+        if ((localStorage.getItem('old_darkID_token'))) {
             console.log(window.location.hash);
             if ((window.location.hash === '#!/login') || (window.location.hash === '#!/signup')) {
                 window.location = '#!/main';
@@ -31,8 +34,8 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
             if ((window.location !== '#!/login') || (window.location !== '#!/signup')) {
                 console.log('app, user no logged');
 
-                localStorage.removeItem('blid_token');
-                localStorage.removeItem('blid_userdata');
+                localStorage.removeItem('old_darkID_token');
+                localStorage.removeItem('old_darkID_userdata');
                 window.location = '#!/login';
                 $routeProvider.otherwise({
                     redirectTo: '/login'

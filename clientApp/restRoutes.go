@@ -10,6 +10,12 @@ var routes = Routes{
 		Index,
 	},
 	Route{
+		"GetServer",
+		"GET",
+		"/getserver",
+		GetServer,
+	},
+	Route{
 		"IDs",
 		"GET",
 		"/ids",

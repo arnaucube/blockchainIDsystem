@@ -9,13 +9,32 @@ angular.module('app.login', ['ngRoute'])
         });
     }])
 
-    .controller('LoginCtrl', function($scope, $http, $routeParams, toastr) {
+    .controller('LoginCtrl', function($scope, $rootScope, $http, $routeParams, toastr) {
+        $rootScope.server = "";
         $scope.user = {};
+        //set server in goclient
+        $http.get(clientapi + 'getserver')
+            .then(function(data) {
+                console.log("data server: ");
+                console.log(data.data + "/");
+                $rootScope.server = "http://" + data.data.replace("\n", "") + "/";
+                console.log($rootScope.server + "/");
+                localStorage.setItem("old_darkID_server", JSON.stringify($rootScope.server));
+                console.log("server", $rootScope.server + "/");
+            }, function(data) {
+                console.log('data error');
+            });
+
         $scope.login = function() {
+
             console.log('Doing login', $scope.user);
-            console.log(urlapi + "login");
+            console.log($rootScope.server + "/login");
+
+
+
+            //
             $http({
-                    url: urlapi + 'login',
+                    url: $rootScope.server + 'login',
                     method: "POST",
                     headers: {
                         "Content-Type": undefined
@@ -26,12 +45,12 @@ angular.module('app.login', ['ngRoute'])
                         console.log("data: ");
                         console.log(data.data);
                         if (data.data.token) {
-                            localStorage.setItem("blid_token", data.data.token);
-                            localStorage.setItem("blid_user", JSON.stringify(data.data));
+                            localStorage.setItem("old_darkID_token", data.data.token);
+                            localStorage.setItem("old_darkID_user", JSON.stringify(data.data));
                             window.location.reload();
                         } else {
                             console.log("login failed");
-                            toastr.error('Login failed');
+                            toastr.error('Login failed, ' + data.data);
                         }
 
 

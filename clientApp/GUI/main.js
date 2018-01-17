@@ -17,9 +17,9 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 850,
     height: 600,
-    icon: 'img/blockchainIDsystem-logo-white.png'
+    icon: 'img/darkID-logo-white.png'
   })
-  tray = new Tray('img/blockchainIDsystem-logo-white.png')
+  tray = new Tray('img/darkID-logo-white.png')
   const contextMenu = Menu.buildFromTemplate([
     {label: 'Obre la finestra', type: 'radio'},
     {label: 'javascript madness', type: 'radio'},

@@ -9,11 +9,7 @@ import (
 type Config struct {
 	Port           string `json:"port"`
 	KeysDirectory  string `json:"keysDirectory"`
-	ServerIDSigner Server `json:"serverIDsigner"`
-}
-type Server struct {
-	IP   string `json:"ip"`
-	Port string `json:"port"`
+	ServerIDSigner string `json:"serverIDsigner"`
 }
 
 var config Config

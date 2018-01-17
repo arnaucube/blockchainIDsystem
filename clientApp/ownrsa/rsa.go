@@ -29,11 +29,13 @@ type RSA struct {
 }
 
 type PackRSA struct {
-	PubK       string    `json:"pubK"`
-	PrivK      string    `json:"privK"`
-	Date       time.Time `json:"date"`
-	PubKSigned string    `json:"pubKSigned"`
-	Verified   bool      `json:"verified"`
+	PubK          string    `json:"pubK"`
+	PrivK         string    `json:"privK"`
+	Date          time.Time `json:"date"`
+	PubKSigned    string    `json:"pubKSigned"`
+	Verified      bool      `json:"verified"`
+	UnblindedSig  string    `json:"unblindedsig"`
+	BlockchainRef string    `json:"blockchainref"`
 }
 
 const maxPrime = 500

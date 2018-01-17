@@ -9,13 +9,15 @@ angular.module('app.navbar', ['ngRoute'])
         });
     }])
 
-    .controller('NavbarCtrl', function($scope, $http, $routeParams, $location) {
+    .controller('NavbarCtrl', function($scope, $rootScope, $http, $routeParams, $location) {
+        $rootScope.server = JSON.parse(localStorage.getItem("old_darkID_server"));
 
-        $scope.user = JSON.parse(localStorage.getItem("blid_user"));
+        $scope.user = JSON.parse(localStorage.getItem("old_darkID_user"));
 
         $scope.logout = function() {
-            localStorage.removeItem("blid_token");
-            localStorage.removeItem("blid_user");
+            localStorage.removeItem("old_darkID_token");
+            localStorage.removeItem("old_darkID_user");
+            localStorage.removeItem("old_darkID_server");
             window.location.reload();
         };
 

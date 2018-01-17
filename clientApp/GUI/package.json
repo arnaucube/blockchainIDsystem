@@ -1,7 +1,7 @@
 {
-  "name": "blockchainIDsystem-clientApp",
+  "name": "darkID-clientApp",
   "version": "1.0.0",
-  "description": "frontend desktop app for blockchainIDsystem",
+  "description": "frontend desktop app for darkID",
   "main": "main.js",
   "scripts": {
     "postinstall": "bower install",

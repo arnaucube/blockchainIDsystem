@@ -9,7 +9,11 @@ angular.module('app.main', ['ngRoute'])
         });
     }])
 
-    .controller('MainCtrl', function($scope, $http) {
+    .controller('MainCtrl', function($scope, $rootScope, $http) {
+
+        $rootScope.server = JSON.parse(localStorage.getItem("old_darkID_server"));
+
+        $scope.generatingID = false;
         $scope.ids = [];
         $http.get(clientapi + 'ids')
             .then(function(data) {
@@ -22,19 +26,21 @@ angular.module('app.main', ['ngRoute'])
             });
 
         $scope.newID = function() {
+            $scope.generatingID = true;
             $http.get(clientapi + 'newid')
                 .then(function(data) {
                     console.log('data success');
                     console.log(data);
                     $scope.ids = data.data;
+                    $scope.generatingID = false;
 
                 }, function(data) {
                     console.log('data error');
                 });
         };
 
-        $scope.blindAndSendToSign = function(pubK) {
-            $http.get(clientapi + 'blindandsendtosign/' + pubK)
+        $scope.blindAndSendToSign = function(id) {
+            $http.get(clientapi + 'blindandsendtosign/' + id)
                 .then(function(data) {
                     console.log('data success');
                     console.log(data);
@@ -44,8 +50,19 @@ angular.module('app.main', ['ngRoute'])
                     console.log('data error');
                 });
         };
-        $scope.verify = function(pubK) {
-            $http.get(clientapi + 'verify/' + pubK)
+        $scope.verify = function(id) {
+            $http.get(clientapi + 'verify/' + id)
+                .then(function(data) {
+                    console.log('data success');
+                    console.log(data);
+                    $scope.ids = data.data;
+
+                }, function(data) {
+                    console.log('data error');
+                });
+        };
+        $scope.clientApp = function(route, param) {
+            $http.get(clientapi + route + '/' + param)
                 .then(function(data) {
                     console.log('data success');
                     console.log(data);

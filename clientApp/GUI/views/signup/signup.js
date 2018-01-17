@@ -9,35 +9,27 @@ angular.module('app.signup', ['ngRoute'])
   });
 }])
 
-.controller('SignupCtrl', function($scope, $http, $routeParams) {
+.controller('SignupCtrl', function($scope, $http, $routeParams, $rootScope) {
     $scope.user = {};
-    $scope.doSignup = function() {
-      console.log('Doing login', $scope.user);
-
+    $scope.signup = function() {
+      console.log('Doing signup', $scope.user);
       $http({
-          url: urlapi + 'signup',
-          method: "POST",
-          data: $scope.user
-      })
-      .then(function(response) {
-              console.log("response: ");
-              console.log(response.data);
-              if (response.data.success == true)
-              {
-                  localStorage.setItem("cr_webapp_token", response.data.token);
-                  localStorage.setItem("cr_webapp_userdata", JSON.stringify(response.data.user));
-                  window.location.reload();
-              }else{
-                  console.log("signup failed");
-                  toastr.error('Signup failed');
-              }
+              url: $rootScope.server + 'signup',
+              method: "POST",
+              headers: {
+                  "Content-Type": undefined
+              },
+              data: $scope.user
+          })
+          .then(function(data) {
+                  console.log("data: ");
+                  console.log(data.data);
+                  window.location="/";
 
-
-      },
-      function(response) { // optional
-              // failed
-              console.log(response);
-      });
+              },
+              function(data) {
+                  console.log(data);
+              });
 
     };
 });
